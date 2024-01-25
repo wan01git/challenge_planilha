@@ -1,0 +1,28 @@
+<div class="flex items-center justify-between">
+    <mat-icon
+        class="text-white"
+        [svgIcon]="'check_circle'"
+        *ngIf="data.type === 'success'"
+    ></mat-icon>
+    <mat-icon
+        class="text-white"
+        [svgIcon]="'error'"
+        *ngIf="data.type === 'error'"
+    ></mat-icon>
+    <mat-icon
+        class="text-white"
+        [svgIcon]="'warning'"
+        *ngIf="data.type === 'warning'"
+    ></mat-icon>
+    <mat-icon
+        class="text-white"
+        [svgIcon]="'info'"
+        *ngIf="data.type === 'info'"
+    ></mat-icon>
+    <span class="px-4 w-full">{{ data.message }}</span>
+    <mat-icon
+        class="text-white cursor-pointer"
+        [svgIcon]="'close'"
+        (click)="dismiss()"
+    ></mat-icon>
+</div>

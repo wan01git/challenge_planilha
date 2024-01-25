@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import moment from 'moment';
 import * as XLSX from 'xlsx';
 
@@ -8,11 +9,18 @@ import * as XLSX from 'xlsx';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  constructor() {}
+  processedDone: boolean = false;
+  status: any;
+  processing: number = 0;
+  constructor(
+    private _snackBar: MatSnackBar //  private _indexService: indexService
+  ) {}
 
   lans: any = [];
+  teste = 1;
   title = 'challenge_planilha';
   loadingData: boolean = false;
+
   dateError: number = 0;
 
   public dropped(file: any) {
@@ -45,7 +53,7 @@ export class AppComponent {
     }
   }
 
-  private handle(json: any[]) {
+  private async handle(json: any[]) {
     try {
       this.dateError = 0;
       this.lans = [];
@@ -60,23 +68,18 @@ export class AppComponent {
           this.dateError += 1;
         }
         const key: any = {
+          user: lan.IDassinante,
           dateStatus: moment(date, 'YYYYMMDD').toISOString(),
-
-          /*    qtdCobranca: string;
-          periodo: string;
-          done: boolean;
-          dateInicio: string;
-          status: string;
-          dateCancelamento?: number;
-          valor: string;
-          renovacao: string; */
+          qtdCobranca: lan.quantidadeCobranças,
+          periodo: lan.cobradaAcadaXdias,
+          dateInicio: lan.dataInício,
+          status: lan.status,
+          dateCancelamento: lan.dataCancelamento || null,
+          valor: lan.valor,
+          renovacao: lan.próximoCiclo,
         };
 
-        key.value = Math.abs(key.value);
-
-        if (lan.status === 'Cancelada') {
-          key.value = -key.value;
-        }
+        key.valor = Math.abs(key.valor);
 
         Object.keys(key).map((obj) => {
           if (key[obj] === undefined) {
@@ -90,21 +93,21 @@ export class AppComponent {
           }
         });
         this.lans.push(key);
+
+        this.status = `Importando dados (${this.lans.length}/${json.length})`;
       });
+      console.log(this.lans);
+      this.teste = 2;
+      this.loadingData = true;
+      // await this._indexService.postLancamento(this.lans);
+      /*   toast(
+        this._snackBar,
+        'Erro! Por favor, selecione a empresa.',
+        'error',
+        5000
+      ); */
     } catch (e) {
       alert(e);
     }
   }
-}
-
-export interface Lan {
-  dateStatus: string;
-  qtdCobranca: string;
-  periodo: string;
-  done: boolean;
-  dateInicio: string;
-  status: string;
-  dateCancelamento?: number;
-  valor: string;
-  renovacao: string;
 }
